@@ -22,7 +22,7 @@ return new class extends Migration
                 ->nullOnDelete();
             $table->decimal('amount', 10, 2);
             $table->string('description');
-            $table->timestamp('date');
+            $table->timestamp('date')->useCurrent();
             $table->timestamps();
         });
     }
