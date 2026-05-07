@@ -21,6 +21,7 @@ return new class extends Migration
                 ->constrained()
                 ->nullOnDelete();
             $table->decimal('amount', 10, 2);
+            $table->string('description');
             $table->timestamp('date');
             $table->timestamps();
         });
