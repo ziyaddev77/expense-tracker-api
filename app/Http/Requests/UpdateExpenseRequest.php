@@ -26,6 +26,7 @@ class UpdateExpenseRequest extends FormRequest
             'category_id' => 'sometimes|exists:categories,id',
             'amount' => 'sometimes|numeric|min:0',
             'date' => 'sometimes|date',
+            'description' => 'required|string|max:255'
         ];
     }
 }
