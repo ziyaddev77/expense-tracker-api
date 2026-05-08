@@ -22,7 +22,7 @@ class ExpenseController extends Controller
     {
         $month = $request->month;
         $year = $request->year;
-        $limit = $request->limit ?? 10;
+        $limit = $request->limit ?? 5;
         $query = Expense::where('user_id', Auth::id());
 
         if ($month) {
