@@ -40,10 +40,10 @@ class DashboardController extends Controller
             ->whereMonth('date', $month)
             ->whereYear('date', $year)
             ->join('categories', 'expenses.category_id', '=', 'categories.id')
-            ->select('categories.id', 'categories.name', DB::raw('SUM(expenses.amount) as total_spent'))
-            ->groupBy('categories.id', 'categories.name')
+            ->select('categories.id', 'categories.name', 'categories.description', 'categories.icon', DB::raw('SUM(expenses.amount) as total_spent'))
+            ->groupBy('categories.id', 'categories.name', 'categories.description', 'categories.icon')
             ->orderByDesc('total_spent')
-            ->limit(5)
+            ->limit(4)
             ->get()
             ->map(function ($category) use ($userId, $month, $year) {
                 $category->total_budget = Budget::where('user_id', $userId)
@@ -103,5 +103,40 @@ class DashboardController extends Controller
             'year' => $year,
             'categories' => $categories,
         ]);
+    }
+
+    public function weeklyActivity()
+    {
+        $startDate = now()->subDays(6)->startOfDay();
+        $endDate = now()->endOfDay();
+
+        $expenses = Expense::where('user_id', Auth::id())
+            ->whereBetween('date', [$startDate, $endDate])
+            ->selectRaw('DATE(date) as date, DAYNAME(date) as day, SUM(amount) as total')
+            ->groupByRaw('DATE(date), DAYNAME(date)')
+            ->orderByRaw('DATE(date)')
+            ->get()
+            ->keyBy('date');
+
+        $data = collect();
+        $date = $startDate->copy();
+        while ($date->lte($endDate)) {
+            $key = $date->format('Y-m-d');
+            $dayName = $date->format('l');
+            if ($expenses->has($key)) {
+                $data->push([
+                    'day' => $expenses[$key]->day,
+                    'total' => (float) $expenses[$key]->total,
+                ]);
+            } else {
+                $data->push([
+                    'day' => $dayName,
+                    'total' => 0,
+                ]);
+            }
+            $date->addDay();
+        }
+
+        return response()->json(['data' => $data]);
     }
 }

@@ -21,4 +21,5 @@ Route::middleware(['auth:sanctum'])->group(function () {
     ]);
     Route::get('/dashboard', [DashboardController::class, 'index']);
     Route::get('/categories-summary', [DashboardController::class, 'categoriesSummary']);
+    Route::get('/weekly-activity', [DashboardController::class, 'weeklyActivity']);
 });
