@@ -23,17 +23,10 @@ class DashboardController extends Controller
             ->where('year', $year)
             ->sum('amount');
 
-        if ($totalBudget == 0) {
-            $totalBudget = Budget::where('user_id', $userId)
-                ->whereNotNull('category_id')
-                ->where('month', $month)
-                ->where('year', $year)
-                ->sum('amount');
-        }
-
-        $totalSpent = Expense::where('user_id', $userId)
-            ->whereMonth('date', $month)
-            ->whereYear('date', $year)
+        $allocated = Budget::where('user_id', $userId)
+            ->whereNotNull('category_id')
+            ->where('month', $month)
+            ->where('year', $year)
             ->sum('amount');
 
         $topCategories = Expense::where('expenses.user_id', $userId)
@@ -67,8 +60,8 @@ class DashboardController extends Controller
             'month' => $month,
             'year' => $year,
             'total_budget' => $totalBudget,
-            'total_spent' => $totalSpent,
-            'remaining' => $totalBudget - $totalSpent,
+            'allocated' => $allocated,
+            'remaining' => $totalBudget - $allocated,
             'top_categories' => $topCategories,
             'recent_expenses' => $recentExpenses,
         ]);
