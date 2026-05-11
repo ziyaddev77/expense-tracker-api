@@ -17,11 +17,11 @@ fi
 
 if [ "${WAIT_FOR_DB:-true}" = "true" ] && { [ "${DB_CONNECTION}" = "mysql" ] || [ "${DB_CONNECTION}" = "mariadb" ]; }; then
     php -r '
-        $host = getenv("DB_HOST") ?: "127.0.0.1";
-        $port = getenv("DB_PORT") ?: "3306";
-        $db = getenv("DB_DATABASE") ?: "laravel";
-        $user = getenv("DB_USERNAME") ?: "root";
-        $pass = getenv("DB_PASSWORD") ?: "";
+        $host = getenv("DB_HOST") ?: (getenv("MYSQLHOST") ?: "127.0.0.1");
+        $port = getenv("DB_PORT") ?: (getenv("MYSQLPORT") ?: "3306");
+        $db = getenv("DB_DATABASE") ?: (getenv("MYSQLDATABASE") ?: "laravel");
+        $user = getenv("DB_USERNAME") ?: (getenv("MYSQLUSER") ?: "root");
+        $pass = getenv("DB_PASSWORD") ?: (getenv("MYSQLPASSWORD") ?: "");
         $dsn = "mysql:host={$host};port={$port};dbname={$db}";
 
         for ($i = 0; $i < 60; $i++) {
