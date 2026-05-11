@@ -29,6 +29,11 @@ class DashboardController extends Controller
             ->where('year', $year)
             ->sum('amount');
 
+        $totalSpent = Expense::where('user_id', $userId)
+            ->whereMonth('date', $month)
+            ->whereYear('date', $year)
+            ->sum('amount');
+
         $topCategories = Expense::where('expenses.user_id', $userId)
             ->whereMonth('date', $month)
             ->whereYear('date', $year)
@@ -61,7 +66,8 @@ class DashboardController extends Controller
             'year' => $year,
             'total_budget' => $totalBudget,
             'allocated' => $allocated,
-            'remaining' => $totalBudget - $allocated,
+            'total_spent' => $totalSpent,
+            'remaining' => $totalBudget - $totalSpent,
             'top_categories' => $topCategories,
             'recent_expenses' => $recentExpenses,
         ]);
